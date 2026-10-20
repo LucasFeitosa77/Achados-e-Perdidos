@@ -1,0 +1,62 @@
+
+.cabecalho {
+  width: 100%;
+  min-height: 90px;
+  padding: 20px 6%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  box-sizing: border-box;
+}
+
+/* Nome do sistema */
+
+.cabecalho__titulo {
+  margin: 0;
+
+  color: #14532d;
+  font-size: 1.65rem;
+  font-weight: 750;
+  letter-spacing: -0.7px;
+}
+
+/* Saudação ao usuário */
+
+.cabecalho__saudacao {
+  margin: 0;
+
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.cabecalho__saudacao strong {
+  color: #1e293b;
+  font-weight: 650;
+}
+
+/* Adaptação para celulares */
+
+@media (max-width: 600px) {
+  .cabecalho {
+    min-height: auto;
+    padding: 20px 5%;
+
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cabecalho__titulo {
+    font-size: 1.4rem;
+  }
+
+  .cabecalho__saudacao {
+    font-size: 0.9rem;
+  }
+}

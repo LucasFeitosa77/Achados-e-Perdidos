@@ -1,0 +1,50 @@
+/* Container principal da lista */
+.listaItens {
+  width: 100%;
+}
+
+/* Grade de cards (Grid responsivo) */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Estados especiais (Carregando, Erro, Vazio) */
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background-color: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.estado h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.estado p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Estado de Erro específico */
+.erro {
+  border-color: #fca5a5;
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.erro h2 {
+  color: #b91c1c;
+}

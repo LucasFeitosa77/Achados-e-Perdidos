@@ -1,0 +1,81 @@
+/* Container do Card */
+.cardItem {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  outline: none;
+}
+
+/* Efeito Hover e Foco para Acessibilidade */
+.cardItem:hover,
+.cardItem:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+/* Conteúdo Principal */
+.card_item__conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Nome do Item */
+.card_item__nome {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+/* Categoria */
+.card_item__categoria {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+/* Local */
+.card_item__local {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.card_item__local strong {
+  color: #1e293b;
+}
+
+/* Base da Badge de Status */
+.card-item__status {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Status: Aguardando */
+.card-item__status--aguardando {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+/* Status: Devolvido */
+.card-item__status--devolvido {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}

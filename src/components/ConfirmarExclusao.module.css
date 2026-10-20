@@ -1,0 +1,103 @@
+/* Fundo escuro (Overlay) centralizado na tela */
+.fundo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+/* Modal da Confirmação */
+.modal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: surgimento 0.2s ease-out;
+}
+
+@keyframes surgimento {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Título */
+.titulo {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Descrição */
+.descricao {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.descricao strong {
+  color: #0f172a;
+}
+
+/* Botões / Ações */
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.botao {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.botao:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilo do botão Cancelar */
+.cancelar {
+  background-color: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+.cancelar:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+/* Estilo do botão Excluir (Ação destrutiva) */
+.excluir {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.excluir:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
