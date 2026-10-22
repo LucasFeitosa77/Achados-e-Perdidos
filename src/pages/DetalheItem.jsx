@@ -82,7 +82,6 @@ function DetalheItem() {
         devolvido_para: nome,
       });
 
-      // Atualiza o item com os dados retornados pela API.
       if (resposta && resposta.id) {
         setItem(resposta);
       } else {

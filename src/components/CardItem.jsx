@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import style from "./CardItem.module.css"; // <-- 1. ADICIONE ESTA IMPORTAÇÃO
+import style from "./CardItem.module.css";
 
 function CardItem({ item }) {
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ function CardItem({ item }) {
           {item.categoria}
         </p>
 
-        {/* 2. ADICIONADO O "style." AQUI */}
         <p className={style.card_item__local}>
           <strong>Local:</strong> {item.local}
         </p>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cabecalho from "../components/Cabecalho";
 import FiltroItens from "../components/FiltroItens";
 import ListaItens from "../components/ListaItens";
-import styles from "./Home.module.css"; // <-- Importação do CSS Module
+import styles from "./Home.module.css";
 
 import {
   listarItens,
@@ -14,7 +14,7 @@ import {
 } from "../services/itensService";
 
 function Home() {
-  const navigate = useNavigate(); // Boa prática com react-router-dom em vez de window.location.href
+  const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState(null);
   const [itens, setItens] = useState([]);
@@ -31,7 +31,6 @@ function Home() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  // Busca os dados necessários para montar a página.
   useEffect(() => {
     async function carregarDadosIniciais() {
       try {
@@ -53,7 +52,6 @@ function Home() {
     carregarDadosIniciais();
   }, []);
 
-  // Busca os itens sempre que algum filtro mudar.
   useEffect(() => {
     async function carregarItens() {
       setCarregando(true);

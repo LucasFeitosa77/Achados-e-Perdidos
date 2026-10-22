@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Cabecalho from "../components/Cabecalho";
 import CamposItens from "../components/CamposItens";
-import styles from "./FormularioItem.module.css"; // <-- Importação do CSS Module
+import styles from "./FormularioItem.module.css"; //
 
 import {
   buscarUsuario,
@@ -37,7 +37,6 @@ function FormularioItem() {
   const [erro, setErro] = useState(null);
   const [mensagem, setMensagem] = useState("");
 
-  // Carrega os dados necessários para o formulário.
   useEffect(() => {
     async function carregarDados() {
       try {
