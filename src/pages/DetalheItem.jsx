@@ -1,17 +1,16 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import Cabecalho from "../components/Cabecalho";
 import ConfirmaExclusao from "../components/ConfirmaExclusao";
-
 import {
   buscarUsuario,
   buscarItem,
   excluirItem,
-  devolverItem
+  devolverItem,
 } from "../services/itensService";
-
+import { formatarData, obterMensagemErro } from "../utils/Utils";
+import styles from "./DetalheItem.module.css";
 
 function DetalheItem() {
   const { id } = useParams();
@@ -20,37 +19,28 @@ function DetalheItem() {
   const [usuario, setUsuario] = useState(null);
   const [item, setItem] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(null);
+  const [erro, setErro] = useState("");
   const [mensagem, setMensagem] = useState("");
 
-  const [confirmacaoAberta, setConfirmacaoAberta] =
-    useState(false);
-
+  const [confirmacaoAberta, setConfirmacaoAberta] = useState(false);
   const [devolvidoPara, setDevolvidoPara] = useState("");
   const [devolvendo, setDevolvendo] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
 
-  // Carrega o usuário e o item selecionado.
   useEffect(() => {
     async function carregarDados() {
       setCarregando(true);
-      setErro(null);
-
+      setErro("");
       try {
         const [dadosUsuario, dadosItem] = await Promise.all([
           buscarUsuario(),
-          buscarItem(id)
+          buscarItem(id),
         ]);
 
         setUsuario(dadosUsuario);
         setItem(dadosItem);
       } catch (error) {
-        console.error("Erro ao carregar detalhes:", error);
-
-        setErro(
-          error.response?.data?.detail ||
-          "Não foi possível carregar os dados do item."
-        );
+        setErro(obterMensagemErro(error, "Não foi possível carregar o item."));
       } finally {
         setCarregando(false);
       }
@@ -59,58 +49,51 @@ function DetalheItem() {
     carregarDados();
   }, [id]);
 
-  // Exclui o item após a confirmação.
   async function handleExcluir() {
     setExcluindo(true);
-    setErro(null);
-
+    setErro("");
     try {
       await excluirItem(id);
       navigate("/");
     } catch (error) {
-      console.error("Erro ao excluir item:", error);
-
-      setErro(
-        error.response?.data?.detail ||
-        "Não foi possível excluir o item."
-      );
-
+      setErro(obterMensagemErro(error, "Não foi possível excluir o item."));
       setConfirmacaoAberta(false);
     } finally {
       setExcluindo(false);
     }
   }
 
-  // Registra a devolução do item.
   async function handleDevolver(event) {
     event.preventDefault();
 
-    if (!devolvidoPara.trim()) {
+    const nome = devolvidoPara.trim();
+
+    if (!nome) {
       setErro("Informe o nome de quem recebeu o item.");
       return;
     }
 
     setDevolvendo(true);
-    setErro(null);
+    setErro("");
     setMensagem("");
 
     try {
-      await devolverItem(id, {
-        devolvido_para: devolvidoPara.trim()
+      const resposta = await devolverItem(id, {
+        devolvido_para: nome,
       });
 
-      const itemAtualizado = await buscarItem(id);
+      // Atualiza o item com os dados retornados pela API.
+      if (resposta && resposta.id) {
+        setItem(resposta);
+      } else {
+        const itemAtualizado = await buscarItem(id);
+        setItem(itemAtualizado);
+      }
 
-      setItem(itemAtualizado);
-      setMensagem("Item marcado como devolvido!");
       setDevolvidoPara("");
+      setMensagem("Item marcado como devolvido com sucesso.");
     } catch (error) {
-      console.error("Erro ao registrar devolução:", error);
-
-      setErro(
-        error.response?.data?.detail ||
-        "Não foi possível registrar a devolução."
-      );
+      setErro(obterMensagemErro(error, "Não foi possível registrar a devolução."));
     } finally {
       setDevolvendo(false);
     }
@@ -118,162 +101,212 @@ function DetalheItem() {
 
   if (carregando) {
     return (
-      <main className="detalhe-item">
+      <div className={styles.detalhe}>
         <Cabecalho nomeUsuario={usuario?.nome} />
-        <p>Carregando detalhes do item...</p>
-      </main>
+        <main className={styles.detalhe__conteudo}>
+          <p className={styles.detalhe__carregando}>
+            Carregando detalhes do item...
+          </p>
+        </main>
+      </div>
     );
   }
 
   if (erro && !item) {
     return (
-      <main className="detalhe-item">
+      <div className={styles.detalhe}>
         <Cabecalho nomeUsuario={usuario?.nome} />
+        <main className={styles.detalhe__conteudo}>
+          <p className={styles.detalhe__erro}>{erro}</p>
 
-        <p className="detalhe-item__erro" role="alert">
-          {String(erro)}
-        </p>
-
-        <button type="button" onClick={() => navigate("/")}>
-          Voltar para a lista
-        </button>
-      </main>
+          <button
+            type="button"
+            className={styles.detalhe__voltar}
+            onClick={() => navigate("/")}
+          >
+            ← Voltar para a lista
+          </button>
+        </main>
+      </div>
     );
   }
 
   if (!item) {
-    return null;
+    return (
+      <div className={styles.detalhe}>
+        <Cabecalho nomeUsuario={usuario?.nome} />
+        <main className={styles.detalhe__conteudo}>
+          <p className={styles.detalhe__vazio}>Item não encontrado.</p>
+          <button
+            type="button"
+            className={styles.detalhe__voltar}
+            onClick={() => navigate("/")}
+          >
+            ← Voltar para a lista
+          </button>
+        </main>
+      </div>
+    );
   }
 
+  const foiDevolvido = item.status === "devolvido";
+
   return (
-    <main className="detalhe-item">
+    <div className={styles.detalhe}>
       <Cabecalho nomeUsuario={usuario?.nome} />
 
-      <section className="detalhe-item__conteudo">
+      <main className={styles.detalhe__conteudo}>
         <button
           type="button"
-          className="detalhe-item__voltar"
+          className={styles.detalhe__voltar}
           onClick={() => navigate("/")}
         >
-          ← Voltar
+          ← Voltar para a lista
         </button>
 
-        <div className="detalhe-item__cabecalho">
-          <h2>{item.nome}</h2>
-
-          <span
-            className={`detalhe-item__status detalhe-item__status--${item.status}`}
-          >
-            {item.status === "aguardando"
-              ? "Aguardando devolução"
-              : "Devolvido"}
-          </span>
-        </div>
-
-        <div className="detalhe-item__informacoes">
-          <div>
-            <h3>Descrição</h3>
-            <p>{item.descricao || "Sem descrição."}</p>
-          </div>
-
-          <div>
-            <h3>Categoria</h3>
-            <p>{item.categoria}</p>
-          </div>
-
-          <div>
-            <h3>Local encontrado</h3>
-            <p>{item.local}</p>
-          </div>
-
-          <div>
-            <h3>Encontrado em</h3>
-            <p>
-              {item.data_encontrado
-                ? item.data_encontrado.split("-").reverse().join("/")
-                : "Data não informada"}
-            </p>
-          </div>
-
-          {item.status === "devolvido" && (
-            <>
-              <div>
-                <h3>Devolvido para</h3>
-                <p>{item.devolvido_para || "Não informado"}</p>
-              </div>
-
-              <div>
-                <h3>Data da devolução</h3>
-                <p>
-                  {item.data_devolucao
-                    ? item.data_devolucao.split("T")[0]
-                        .split("-").reverse().join("/")
-                    : "Não informada"}
-                </p>
-              </div>
-            </>
-          )}
-        </div>
-
-        {erro && (
-          <p className="detalhe-item__erro" role="alert">
-            {String(erro)}
-          </p>
-        )}
-
         {mensagem && (
-          <p className="detalhe-item__sucesso" role="status">
+          <p className={styles.detalhe__mensagem} role="status">
             {mensagem}
           </p>
         )}
 
-        <div className="detalhe-item__acoes">
-          <button
-            type="button"
-            onClick={() => navigate(`/editar/${item.id}`)}
-            disabled={excluindo || devolvendo}
-          >
-            Editar
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setConfirmacaoAberta(true)}
-            disabled={excluindo || devolvendo}
-          >
-            Excluir
-          </button>
-        </div>
-
-        {item.status === "aguardando" && (
-          <form
-            className="detalhe-item__devolucao"
-            onSubmit={handleDevolver}
-          >
-            <h3>Registrar devolução</h3>
-
-            <label htmlFor="devolvido_para">
-              Nome de quem recebeu
-            </label>
-
-            <input
-              type="text"
-              id="devolvido_para"
-              name="devolvido_para"
-              value={devolvidoPara}
-              onChange={(event) =>
-                setDevolvidoPara(event.target.value)
-              }
-              placeholder="Digite o nome da pessoa"
-              required
-            />
-
-            <button type="submit" disabled={devolvendo || excluindo}>
-              {devolvendo ? "Registrando..." : "Marcar como devolvido"}
-            </button>
-          </form>
+        {erro && (
+          <p className={styles.detalhe__erro} role="alert">
+            {erro}
+          </p>
         )}
-      </section>
+
+        <header className={styles.detalhe__cabecalho}>
+          <div>
+            <h2 className={styles.detalhe__titulo}>{item.nome}</h2>
+            <p className={styles.detalhe__subtitulo}>
+              Informações sobre o item encontrado.
+            </p>
+          </div>
+
+          <span
+            className={`${styles.detalhe__status} ${
+              foiDevolvido
+                ? styles["detalhe__status--devolvido"]
+                : styles["detalhe__status--aguardando"]
+            }`}
+          >
+            {foiDevolvido ? "Devolvido" : "Aguardando"}
+          </span>
+        </header>
+
+        <section className={styles.detalhe__cartao}>
+          <h3 className={styles["detalhe__secao-titulo"]}>
+            Detalhes do item
+          </h3>
+
+          <div className={styles.detalhe__dados}>
+            <div
+              className={`${styles.detalhe__campo} ${styles["detalhe__campo--completo"]}`}
+            >
+              <span className={styles.detalhe__rotulo}>Descrição</span>
+              <p className={styles.detalhe__valor}>
+                {item.descricao || "Sem descrição informada."}
+              </p>
+            </div>
+
+            <div className={styles.detalhe__campo}>
+              <span className={styles.detalhe__rotulo}>Categoria</span>
+              <p className={styles.detalhe__valor}>{item.categoria}</p>
+            </div>
+
+            <div className={styles.detalhe__campo}>
+              <span className={styles.detalhe__rotulo}>Local encontrado</span>
+              <p className={styles.detalhe__valor}>{item.local}</p>
+            </div>
+
+            <div className={styles.detalhe__campo}>
+              <span className={styles.detalhe__rotulo}>
+                Data em que foi encontrado
+              </span>
+              <p className={styles.detalhe__valor}>
+                {formatarData(item.data_encontrado)}
+              </p>
+            </div>
+
+            {foiDevolvido && (
+              <>
+                <div className={styles.detalhe__campo}>
+                  <span className={styles.detalhe__rotulo}>
+                    Devolvido para
+                  </span>
+                  <p className={styles.detalhe__valor}>
+                    {item.devolvido_para || "Não informado"}
+                  </p>
+                </div>
+
+                <div className={styles.detalhe__campo}>
+                  <span className={styles.detalhe__rotulo}>
+                    Data da devolução
+                  </span>
+                  <p className={styles.detalhe__valor}>
+                    {formatarData(item.data_devolucao)}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className={styles.detalhe__acoes}>
+            {!foiDevolvido && (
+              <button
+                type="button"
+                className={`${styles.detalhe__botao} ${styles["detalhe__botao--editar"]}`}
+                onClick={() => navigate(`/editar/${item.id}`)}
+              >
+                Editar item
+              </button>
+            )}
+
+            <button
+              type="button"
+              className={`${styles.detalhe__botao} ${styles["detalhe__botao--excluir"]}`}
+              onClick={() => setConfirmacaoAberta(true)}
+              disabled={excluindo}
+            >
+              Excluir item
+            </button>
+          </div>
+
+          {!foiDevolvido && (
+            <form
+              className={styles["detalhe__formulario-devolucao"]}
+              onSubmit={handleDevolver}
+            >
+              <h3 className={styles["detalhe__secao-titulo"]}>
+                Registrar devolução
+              </h3>
+
+              <label htmlFor="devolvido_para">
+                Nome de quem recebeu o item
+              </label>
+
+              <input
+                type="text"
+                id="devolvido_para"
+                name="devolvido_para"
+                value={devolvidoPara}
+                onChange={(event) => setDevolvidoPara(event.target.value)}
+                placeholder="Digite o nome completo"
+                required
+              />
+
+              <button
+                type="submit"
+                className={`${styles.detalhe__botao} ${styles["detalhe__botao--devolver"]}`}
+                disabled={devolvendo}
+              >
+                {devolvendo ? "Registrando..." : "Confirmar devolução"}
+              </button>
+            </form>
+          )}
+        </section>
+      </main>
 
       {confirmacaoAberta && (
         <ConfirmaExclusao
@@ -283,7 +316,7 @@ function DetalheItem() {
           carregando={excluindo}
         />
       )}
-    </main>
+    </div>
   );
 }
 

@@ -16,8 +16,8 @@ function CamposItens({
   }
 
   return (
-    <div className={styles.campos_itens}>
-      <div className={campo-item}>
+    <div className={styles['campo-item']}>
+      <div className={styles['campo-item']}>
         <label htmlFor="nome">Nome do item</label>
         <input
           type="text"
@@ -29,7 +29,7 @@ function CamposItens({
         />
       </div>
 
-      <div className={styles.campo-item}>
+      <div className={styles['campo-item']}>
         <label htmlFor="descricao">Descrição</label>
         <textarea
           id="descricao"
@@ -41,7 +41,7 @@ function CamposItens({
         />
       </div>
 
-      <div className={style.campo-item}>
+      <div className={styles['campo-item']}>
         <label htmlFor="categoria">Categoria</label>
         <select
           id="categoria"
@@ -60,7 +60,7 @@ function CamposItens({
         </select>
       </div>
 
-      <div className={styles.campo-item}>
+      <div className={styles['campo-item']}>
         <label htmlFor="local">Local encontrado</label>
         <select
           id="local"
@@ -79,7 +79,7 @@ function CamposItens({
         </select>
       </div>
 
-      <div className={styles.campo-item}>
+      <div className={styles['campo-item']}>
         <label htmlFor="data_encontrado">
           Data em que foi encontrado
         </label>
